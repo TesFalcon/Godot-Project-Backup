@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://7xwaqs3ihvtq"]
+
+[ext_resource type="Texture2D" uid="uid://ce0dfl7mtfb7e" path="res://PokeMerge/selection.png" id="1_7thrw"]
+
+[node name="active_selection" type="Sprite2D"]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_7thrw")

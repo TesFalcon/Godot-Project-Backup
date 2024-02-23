@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://7g20xjp38syb"]
+
+[ext_resource type="Texture2D" path="res://PokeMerge/Pokemart01 - TrainerTips.png" id="1_w6em8"]
+[ext_resource type="Script" path="res://pokemart_01.gd" id="2_vawt1"]
+
+[node name="pokemart01" type="Sprite2D"]
+z_index = 1
+position = Vector2(33, 31)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_w6em8")
+script = ExtResource("2_vawt1")

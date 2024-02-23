@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://o8h5a4ftk7tk"]
+
+[ext_resource type="Script" path="res://game_piece.gd" id="1_inr3m"]
+[ext_resource type="Texture2D" uid="uid://casvj88pnb23a" path="res://PokeMerge/pokemart01.png" id="1_xdm38"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rbpc4"]
+size = Vector2(31, 47)
+
+[node name="GamePiece" type="Area2D"]
+script = ExtResource("1_inr3m")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, -0.5)
+shape = SubResource("RectangleShape2D_rbpc4")
+
+[node name="pokemart" type="Sprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_xdm38")

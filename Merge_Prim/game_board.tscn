@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ceumlim1hwcwd"]
+
+[ext_resource type="Script" path="res://game_board.gd" id="1_nv5dv"]
+
+[node name="GameBoard" type="Node2D"]
+position = Vector2(109, 143)
+script = ExtResource("1_nv5dv")
