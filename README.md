@@ -8,7 +8,7 @@ EnP has two distinct aspects:
 1) Stronghold resources like food and iron as well as hero upgrades.
 2) Combat using Match3 gameplay as a fighting mechanic.
 
-Lots of games have since come out to copy EnP's Match3 fighting mechanic, so that wouldn't be new. Even worse, it's the best aspect of the game as currently designed. It's simple, and it works.
+Lots of games have since come out to copy EnP's Match3 fighting mechanic, so that wouldn't be new. Further, it's the best aspect of the game as currently designed. It's simple, and it works.
 
 The problem and the design flaw is in Stronghold management and hero upgrades.
 1) Every building requires a set amount of food / iron to upgrade to the next level building. Once that low bar is achieved, the building can be upgraded which takes x time to wait. Once the building is maxed out, the building sits there "wasting space".
