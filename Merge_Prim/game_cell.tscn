@@ -1,18 +1,25 @@
 [gd_scene load_steps=4 format=3 uid="uid://cmsgi3hl35jmg"]
 
-[ext_resource type="Texture2D" uid="uid://0cnmofumu5h4" path="res://PokeMerge/cell.png" id="1_6klwp"]
+[ext_resource type="Texture2D" uid="uid://cromk1l8xukkl" path="res://PokeMerge/cell.png" id="1_6klwp"]
 [ext_resource type="Script" path="res://game_cell.gd" id="2_dw2rj"]
-[ext_resource type="Texture2D" uid="uid://ce0dfl7mtfb7e" path="res://PokeMerge/selection.png" id="3_ohkch"]
 
-[node name="game_cell" type="Sprite2D"]
-z_index = -1
-z_as_relative = false
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ft7li"]
+size = Vector2(260, 256)
+
+[node name="game_cell" type="Node2D"]
 scale = Vector2(0.25, 0.25)
-texture = ExtResource("1_6klwp")
 script = ExtResource("2_dw2rj")
 
-[node name="selected" type="Sprite2D" parent="."]
-top_level = true
-z_as_relative = false
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("3_ohkch")
+[node name="cell" type="Sprite2D" parent="."]
+position = Vector2(7.62939e-06, 2)
+scale = Vector2(1.03125, 0.984375)
+texture = ExtResource("1_6klwp")
+offset = Vector2(15, 5)
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(2, 0)
+shape = SubResource("RectangleShape2D_ft7li")
+
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]

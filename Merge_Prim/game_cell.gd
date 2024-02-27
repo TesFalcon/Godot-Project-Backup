@@ -1,24 +1,38 @@
-extends Sprite2D
+extends Node2D
+
+@export var my_name = ""
+
+signal clicked(my_name)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	texture = load("res://PokeMerge/cell.png")
-	$selected.visible = false
-	position = Vector2(100,100)
+	$cell.position = Vector2(100,100)
+	$cell.texture = load("res://PokeMerge/cell.png")
+	$cell.visible = true
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass
 
-func _input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if get_rect().has_point(to_local(event.position)):
-			print("Game_cell clicked!")
-			$selected.position = position
-			$selected.visible = true
+func _on_area_2d_input_event(_viewport, event, _shape_idx):
+	if event is InputEventMouseMotion:
+		#print ("Mouse In Motion")
+		pass
+	if event is InputEventMouseButton:
+		#print ("Game Cell Mouse Button Event")
+		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			print ("GC Left_Click")
+			clicked.emit(my_name, event)
+		elif !event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			#print ("GC Left_Click_Released")
+			pass
+		elif event.pressed and  event.button_index == MOUSE_BUTTON_RIGHT:
+			print ("GC Right_Click")
+			clicked.emit(my_name, event)
+		elif !event.pressed and  event.button_index == MOUSE_BUTTON_RIGHT:
+			#print ("GC Right_Click_Released")
+			pass
 		else:
-			$selected.visible = false
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
-		$selected.visible = false
-		
+			print("GC Some Other Mouse Event")
+	pass # Replace with function body.

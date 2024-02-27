@@ -1,7 +1,26 @@
-[gd_scene load_steps=2 format=3 uid="uid://ceumlim1hwcwd"]
+[gd_scene load_steps=5 format=3 uid="uid://ceumlim1hwcwd"]
 
 [ext_resource type="Script" path="res://game_board.gd" id="1_nv5dv"]
+[ext_resource type="PackedScene" uid="uid://cmsgi3hl35jmg" path="res://game_cell.tscn" id="2_hmj2v"]
+[ext_resource type="Texture2D" uid="uid://bphww5or66qdi" path="res://PokeMerge/selection.png" id="3_8tad4"]
+[ext_resource type="PackedScene" uid="uid://o8h5a4ftk7tk" path="res://game_piece.tscn" id="3_ht7x7"]
 
 [node name="GameBoard" type="Node2D"]
 position = Vector2(109, 143)
 script = ExtResource("1_nv5dv")
+
+[node name="game_cell" parent="." instance=ExtResource("2_hmj2v")]
+position = Vector2(-106, -128)
+
+[node name="active_selection" type="Sprite2D" parent="."]
+z_index = 1
+z_as_relative = false
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_8tad4")
+centered = false
+
+[node name="GamePiece" parent="." instance=ExtResource("3_ht7x7")]
+position = Vector2(-108, -140)
+
+[connection signal="mouse_entered" from="GamePiece" to="." method="_on_game_piece_mouse_entered"]
+[connection signal="mouse_exited" from="GamePiece" to="." method="_on_game_piece_mouse_exited"]
