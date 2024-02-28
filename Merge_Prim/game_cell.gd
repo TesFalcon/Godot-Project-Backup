@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var my_name = ""
+@export var id = ""
 
 signal clicked(my_name)
 
@@ -23,13 +23,13 @@ func _on_area_2d_input_event(_viewport, event, _shape_idx):
 		#print ("Game Cell Mouse Button Event")
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			print ("GC Left_Click")
-			clicked.emit(my_name, event)
+			clicked.emit(id, event)
 		elif !event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			#print ("GC Left_Click_Released")
 			pass
 		elif event.pressed and  event.button_index == MOUSE_BUTTON_RIGHT:
 			print ("GC Right_Click")
-			clicked.emit(my_name, event)
+			clicked.emit(id, event)
 		elif !event.pressed and  event.button_index == MOUSE_BUTTON_RIGHT:
 			#print ("GC Right_Click_Released")
 			pass

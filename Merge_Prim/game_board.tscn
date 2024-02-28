@@ -20,7 +20,9 @@ texture = ExtResource("3_8tad4")
 centered = false
 
 [node name="GamePiece" parent="." instance=ExtResource("3_ht7x7")]
-position = Vector2(-108, -140)
+position = Vector2(-28, -142)
 
+[connection signal="activate_generator" from="." to="." method="_on_activate_generator"]
+[connection signal="activate_generator" from="GamePiece" to="." method="_on_activate_generator"]
 [connection signal="mouse_entered" from="GamePiece" to="." method="_on_game_piece_mouse_entered"]
 [connection signal="mouse_exited" from="GamePiece" to="." method="_on_game_piece_mouse_exited"]

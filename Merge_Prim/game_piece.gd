@@ -1,9 +1,11 @@
 extends Area2D
 
 signal clicked
+signal activate_generator
 
 @export var texture_index = 0
-@export var my_name = ""
+@export var id = 0
+@export var generator = false
 
 var pokemart_textures = ["res://pokemerge/pokemart01.png", 
 "res://pokemerge/pokemart02a.png", "res://pokemerge/pokemart03.png",
@@ -20,6 +22,7 @@ var m_grid_size : Vector2
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$pokemart.position = Vector2(100,100)
+	$active.visible = false
 	if input_pickable:
 		#print("GP Is Pickable")
 		pass
@@ -62,13 +65,14 @@ func _input(event):
 	elif event.is_action_pressed("left_mouse_click"):
 		#print("GP Left Mouse Clicked")
 		#increment_texture(my_name)
-		clicked.emit(my_name, event)
+		clicked.emit(id, event)
 
 func increment_texture():
 	print("GP Incrementing Texture")
 	texture_index += 1
-	if texture_index > pokemart_textures.size() - 1:
-		texture_index = 0
 	$pokemart.texture=load(pokemart_textures[texture_index])
-	#print("GP Texture Changed!")
+	if texture_index > 2:
+		generator = true
+		activate_generator.emit(id)
+	print("GP Texture = ", texture_index)
 	pass # Replace with function body.
