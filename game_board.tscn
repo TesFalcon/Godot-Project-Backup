@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://ceumlim1hwcwd"]
+
+[ext_resource type="Script" path="res://game_board.gd" id="1_nv5dv"]
+[ext_resource type="PackedScene" uid="uid://cmsgi3hl35jmg" path="res://game_cell.tscn" id="2_hmj2v"]
+[ext_resource type="Texture2D" uid="uid://iwb07nn160qt" path="res://PokeMerge/selection_64.png" id="3_grnud"]
+[ext_resource type="PackedScene" uid="uid://o8h5a4ftk7tk" path="res://game_piece.tscn" id="3_ht7x7"]
+[ext_resource type="Texture2D" uid="uid://bvt787478pkcy" path="res://PokeMerge/cartoon_land_3.png" id="5_xi7l5"]
+
+[node name="GameBoard" type="Node2D"]
+position = Vector2(109, 143)
+script = ExtResource("1_nv5dv")
+
+[node name="game_cell" parent="." instance=ExtResource("2_hmj2v")]
+position = Vector2(-106, -128)
+
+[node name="active_selection" type="Sprite2D" parent="."]
+z_index = 1
+z_as_relative = false
+texture = ExtResource("3_grnud")
+centered = false
+
+[node name="GamePiece" parent="." instance=ExtResource("3_ht7x7")]
+position = Vector2(-28, -142)
+
+[node name="CartoonLand3" type="Sprite2D" parent="."]
+position = Vector2(247.5, 499.5)
+scale = Vector2(0.686111, 0.682813)
+texture = ExtResource("5_xi7l5")
+
+[connection signal="activate_generator" from="." to="." method="_on_activate_generator"]
+[connection signal="activate_generator" from="GamePiece" to="." method="_on_activate_generator"]
+[connection signal="mouse_entered" from="GamePiece" to="." method="_on_game_piece_mouse_entered"]
+[connection signal="mouse_exited" from="GamePiece" to="." method="_on_game_piece_mouse_exited"]
