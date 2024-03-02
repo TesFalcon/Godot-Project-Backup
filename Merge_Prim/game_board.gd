@@ -28,10 +28,8 @@ func _ready():
 	$game_cell.visible = false
 	$active_selection.visible = false
 	$GamePiece.visible = false
-	if max_cells > 8:
-		make_piece("pokemart", 8)
-	else:
-		make_piece("pokemart", max_cells)
+	make_piece("pokemart", max_cells / 2)
+	#make_piece("ruins", max_cells / 2)
 	populate_gameboard()
 
 func make_cells():
@@ -39,27 +37,28 @@ func make_cells():
 		var c = cell.instantiate()
 		add_child(c)
 		all_cells.append(c)
-	
+		c.id = i
+		c.clicked.connect(_on_cell_clicked)
+
 func make_gameboard():
-	var start_position_x = -100
-	var start_position_y = -200
+	var start_position_x
+	var start_position_y = 100
 	var cell_num = 0
 	var cell_size = 0 
+	cell_size = all_cells[0].get_node("cell").get_rect().size.x
+	#Game is setup for a screen width of 720.
+	start_position_x = (720 - (cell_size * width))/2 
 	for h in height:
 		for w in width:
-			cell_size = all_cells[cell_num].get_node("cell").get_rect().size.x / 4
-			var w_modifier = cell_size * w + 5
+			var w_modifier = cell_size * w
 			var h_modifier = cell_size * h
-			if cell_num < height * width:
-				all_cells[cell_num].position = to_global(Vector2(start_position_x + w_modifier, start_position_y + h_modifier))
-				all_cells[cell_num].visible = true
-				all_cells[cell_num].id = cell_num
-				all_cells[cell_num].clicked.connect(_on_cell_clicked)
-				cell_location.append(all_cells[cell_num].position)
-				game_board.append(Empty)
+			all_cells[cell_num].position = Vector2(start_position_x + w_modifier, start_position_y + h_modifier)
+			all_cells[cell_num].visible = true
+			cell_location.append(all_cells[cell_num].position)
+			game_board.append(Empty)
 			cell_num += 1
 			#print("Vector = ",w,", ", h)
-	print("GB make_gameboard Cell_Locations = ", cell_location)
+	print("GB make_gameboard: ", max_cells, " Cell_Locations = ", cell_location)
 
 func make_piece(series, quantity):
 	for i in range(quantity):
@@ -82,13 +81,10 @@ func populate_gameboard():
 	print("GB initial game_board = ", game_board)
 	pass
 
-func place_piece(piece_id, new_cell, old_cell):
+func place_piece(piece_id, new_cell, _old_cell):
 	print("~~~GB Piece #", piece_id, " Placed @ Cell #", new_cell, "~~~")
 	all_pieces[piece_id].id = new_cell
 	all_pieces[piece_id].position = cell_location[new_cell]
-	#piece position is off just a little bit. 
-	all_pieces[piece_id].position = all_pieces[piece_id].position + Vector2(-7,-9)
-	#This line ^-^-^ is to nudge it into a more accurate overlay position with the cell.
 
 func swap_pieces(new_cell, old_cell):
 	place_piece(game_board[old_cell], new_cell, Empty)
@@ -108,19 +104,24 @@ func find_empty_cell():
 		if game_board[i] == Empty:
 			return i
 	return Empty
-	pass
+	#pass
 
 func find_family(family):
 	match family:
 		"pokemart":
-			if randi_range(0, 5) != 5:
+			if randi_range(0, 10) != 10:
 				return "pokeball"
 			else:
 				return "heal"
+		"ruins":
+			if randi_range(0, 10) != 10:
+				return "fossil"
+			else:
+				return "stone"
 		_:
 			print("GB Find_Family Error!")
 			return "error"
-	pass
+	#pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -141,9 +142,6 @@ func _on_cell_clicked(cell_id, event):
 	if event.is_action_pressed("left_mouse_click"):
 		#print ("GB OnCell Left Click")
 		$active_selection.position = cell_location[cell_id]
-		#Active_selection position is off just a little bit. 
-		$active_selection.position = $active_selection.position - Vector2(5,7)
-		#This line ^-^-^ is to nudge it into a more accurate overlay position with the cell.
 		$active_selection.visible = true
 		if clicked_array.size() > 1:
 			previous_click = clicked_array[-2]
@@ -216,16 +214,9 @@ func _on_activate_generator(id):
 	var piece_id = game_board[id]
 	print("~~~GB Activate Generator~~~")
 	print("GB Cell Position = ", cell_location[cell_id])
-	print("GB Local Cell Position = ", to_local(cell_location[cell_id]))
-	print("GB Global Cell position = ", to_global(cell_location[cell_id]))
 	print("GB Piece Position = ", all_pieces[piece_id].position)
-	print("GB Local Piece Position = ", to_local(all_pieces[piece_id].position))
-	print("GB Global Piece position = ", to_global(all_pieces[piece_id].position))
 	
-	all_pieces[piece_id].get_node("active").position = all_pieces[piece_id].position
-	#active position is off just a little bit. 
-	#all_pieces[piece_id].get_node("active").position = all_pieces[piece_id].get_node("active").position + Vector2(55,235)
-	#This line ^-^-^ is to nudge it into a more accurate overlay position with the piece.
+	#all_pieces[piece_id].get_node("active").position = to_local(all_pieces[piece_id].position)
 	all_pieces[piece_id].get_node("active").visible = true
 	all_pieces[piece_id].generator = true
 	pass # Replace with function body.

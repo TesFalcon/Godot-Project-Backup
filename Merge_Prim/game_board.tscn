@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://bvt787478pkcy" path="res://PokeMerge/cartoon_land_3.png" id="5_xi7l5"]
 
 [node name="GameBoard" type="Node2D"]
-position = Vector2(109, 143)
 script = ExtResource("1_nv5dv")
 
 [node name="game_cell" parent="." instance=ExtResource("2_hmj2v")]
@@ -23,11 +22,9 @@ centered = false
 position = Vector2(-28, -142)
 
 [node name="CartoonLand3" type="Sprite2D" parent="."]
-position = Vector2(247.5, 499.5)
+position = Vector2(365, 129)
 scale = Vector2(0.686111, 0.682813)
 texture = ExtResource("5_xi7l5")
 
 [connection signal="activate_generator" from="." to="." method="_on_activate_generator"]
 [connection signal="activate_generator" from="GamePiece" to="." method="_on_activate_generator"]
-[connection signal="mouse_entered" from="GamePiece" to="." method="_on_game_piece_mouse_entered"]
-[connection signal="mouse_exited" from="GamePiece" to="." method="_on_game_piece_mouse_exited"]
