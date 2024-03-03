@@ -20,7 +20,7 @@ The problem and the design flaw is in Stronghold management and hero upgrades.
 To address these flaws, here are my proposed solutions:
 
 Flaw 1) Building Upgrades and Uses <br>
-  1) Upgrade Solution - I will turn the entire Stronghold aspect of the game into a Match-style game. So rather than just depending on food and iron to upgrade a building, you would also need to collect the requisite building parts which would then merge together to make the building. To upgrade the building, you'd have to build 2 buildings of the same level which can then merge into that next level building. Farm_1 + Farm_1 = Farm_2.
+  1) Upgrade Solution - I will turn the entire Stronghold aspect of the game into a Merge-style game. So rather than just depending on food and iron to upgrade a building, you would also need to collect the requisite building parts which would then merge together to make the building. To upgrade the building, you'd have to build 2 buildings of the same level which can then merge into that next level building. Farm_1 + Farm_1 = Farm_2.
   2) Use Solution - These buildings produce the villagers for the Stronghold in that building's area of focus (butcher, garden, blacksmith, woodland, crafting). From these base villagers, a hero will emerge from their daily tasks to have exceptional skill in one of 5 different roles (mage, archer, paladin, barbarian, healer) from 5 different energy sources (sun, moon, fire, water, nature). Each building produces a resource toward the needs of the whole. Training camps hold inactive heroes who are waiting to merge to the next level.
 
 Flaw 2) Arbitrary and limited need for food and resources <br>
