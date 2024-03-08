@@ -11,28 +11,41 @@ var cell_location = []
 var all_cells = []
 
 signal clicked(cell_name, event)
-signal activate_generator(id)
-
-var clicked_array = [] #To determine what the last move was
+var previous_click #To determine what the last move was
 
 var game_piece = preload("res://game_piece.tscn")
 var all_pieces = []
 
+var score = 0
+var level = 1
+var level_score = level * 10
+
+const generators = ["pokemart", "ruins", "industry", "game"]
+const reverse_generators = ["chest", "vending"]
+const immobile = ["grass"]
+const unmergeable = ["chest", "grass"]
+
+const default_iteminfo = "Click a piece to get more info."
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	width = 4
-	height = 4
+	width = 7
+	height = 9
 	max_cells = height * width
 	make_cells()
 	make_gameboard()
 	$game_cell.visible = false
 	$active_selection.visible = false
 	$GamePiece.visible = false
-	make_piece("pokemart", max_cells / 2)
-	#make_piece("ruins", max_cells / 2)
+	$grass.visible = false
+	make_piece("game", 8)
+	#make_piece("industry", 8)
 	populate_gameboard()
-
+	display_score()
+	$lblItemInfo.text = default_iteminfo
+	
 func make_cells():
+	print("== GB Making Cells ==")
 	for i in range(max_cells):
 		var c = cell.instantiate()
 		add_child(c)
@@ -42,12 +55,12 @@ func make_cells():
 
 func make_gameboard():
 	var start_position_x
-	var start_position_y = 100
+	var start_position_y = 130
 	var cell_num = 0
 	var cell_size = 0 
 	cell_size = all_cells[0].get_node("cell").get_rect().size.x
 	#Game is setup for a screen width of 720.
-	start_position_x = (720 - (cell_size * width))/2 
+	start_position_x = (710 - (cell_size * width)) 
 	for h in height:
 		for w in width:
 			var w_modifier = cell_size * w
@@ -58,38 +71,66 @@ func make_gameboard():
 			game_board.append(Empty)
 			cell_num += 1
 			#print("Vector = ",w,", ", h)
-	print("GB make_gameboard: ", max_cells, " Cell_Locations = ", cell_location)
+	print("== GB make_gameboard: ", max_cells)
+	print("   Cell_Locations = ", cell_location)
 
 func make_piece(series, quantity):
+	print("== GB ", quantity, " piece(s) of family ", series, " to be made")
 	for i in range(quantity):
-		var p = game_piece.instantiate()
-		add_child(p)
-		all_pieces.append(p)
-		p.texture_index = Empty
-		p.family = series
-		p.increment_texture()
-		p.visible = true
-		p.activate_generator.connect(_on_activate_generator)
-	print("GB ", quantity, " piece(s) of family ", series, " made and added to all_pieces")
+		if all_pieces.size() < all_cells.size():
+			var p = game_piece.instantiate()
+			add_child(p)
+			all_pieces.append(p)
+			p.family = series
+			match series:
+				"chest":
+					p.texture_index = 3 #Set to max_texture
+				"crystal", "grass":
+					p.texture_index = randi_range(-1, 1)
+				_:
+					p.texture_index = randi_range(-1, 0)
+			if reverse_generators.has(series):
+				p.generator = "reverse"
+			elif generators.has(series):
+				p.generator = "forward"
+			else:
+				p.generator = ""
+			#print("GB Make_Piece Generator = _", p.generator, "_")
+			p.increment_texture()
+			p.visible = true
+		else:
+			print("== GB Piece NOT made: Game board full")
+			break
 	pass
 
 func populate_gameboard():
+	var board_center = max_cells / 2
 	for cell_num in range(all_pieces.size()):
-		place_piece(cell_num,cell_num,Empty)
-		game_board[cell_num] = cell_num
-		#print("Vector = ",w,", ", h)
-	print("GB initial game_board = ", game_board)
+		var closestMT = find_closest_empty_cell(board_center)
+		place_piece(cell_num,closestMT,Empty)
+		update_game_board()
+	for cell_num in range(max_cells):
+		if game_board[cell_num] == Empty:
+			make_piece("grass", 1)
+			place_piece(all_pieces.size()-1, cell_num, Empty)
+	print(" = GB Game Board initialized = ")
 	pass
 
-func place_piece(piece_id, new_cell, _old_cell):
+func place_piece(piece_id, new_cell, old_cell):
 	print("~~~GB Piece #", piece_id, " Placed @ Cell #", new_cell, "~~~")
 	all_pieces[piece_id].id = new_cell
-	all_pieces[piece_id].position = cell_location[new_cell]
+	all_pieces[piece_id].position = cell_location[new_cell] - Vector2(0,4) #Nudging it upward into a better position
 
+func place_grass(cell_num):
+	var g = $grass.instantiate()
+	add_child(g)
+	g.position = cell_location[cell_num]
+	g.visible = true
+	
 func swap_pieces(new_cell, old_cell):
-	place_piece(game_board[old_cell], new_cell, Empty)
+	print("~~~GB Piece @ Cell #", old_cell, " swapped with piece @ ", new_cell, " ~~~")
 	place_piece(game_board[new_cell], old_cell, Empty)
-	clicked_array.clear()
+	previous_click = Vector2()
 	pass
 
 func update_game_board():
@@ -98,15 +139,71 @@ func update_game_board():
 		game_board.append(Empty)
 	for i in range(all_pieces.size()):
 		game_board[all_pieces[i].id] = i
+	print("=== GB Updated Game Board: ", game_board)
 
 func find_empty_cell():
+	print("== GB Finding Empty Cell")
 	for i in range(max_cells):
 		if game_board[i] == Empty:
 			return i
 	return Empty
 	#pass
 
+func find_closest_family(origin, family):
+	var cell_vectors = []
+	var closest_family = Empty
+	var family_count = 0
+	for i in range(max_cells):
+		if game_board[i] != Empty:
+			if all_pieces[game_board[i]].family == family:
+				var magnitude = cell_location[origin].distance_to(cell_location[i])
+				cell_vectors.append(magnitude)
+				family_count += 1
+			else:
+				cell_vectors.append(5000)
+		else:
+			cell_vectors.append(5000)
+	print ("   GB There are ", family_count, " members of this family on the board")
+	print ("   GB family_cell_vectors = ", cell_vectors)
+	var min = cell_vectors.min()
+	print (" GB Closest Family is ", min, " distance")
+	if min != 5000 and min < 100:
+		for i in range(max_cells):
+			if cell_vectors[i] == min:
+				closest_family = i
+				break
+	print (" GB Origin is cell #", origin)
+	print (" GB Closest Family is cell #", closest_family)
+	return closest_family
+	pass
+	
+func find_closest_empty_cell(origin):
+	print("== GB Finding Closest Empty Cell")
+	#Make a game_board of vectors from origin to the target
+	var cell_vectors = []
+	var closest_mt_cell = Empty
+	
+	for i in range(max_cells):
+		if game_board[i] == Empty:
+			var magnitude = cell_location[origin].distance_to(cell_location[i])
+			cell_vectors.append(magnitude)
+		else:
+			cell_vectors.append(5000)
+	#print ("   GB cell_vectors = ", cell_vectors)
+	var min = cell_vectors.min()
+	if min != 5000:
+		for i in range(max_cells):
+			if cell_vectors[i] == min:
+				closest_mt_cell = i
+				break
+				
+	print ("   GB Closest_mt_cell = ", closest_mt_cell)
+	#print("GB Cell Vectors = ", cell_vectors)
+	return closest_mt_cell
+	#pass
+
 func find_family(family):
+	print("==  GB Finding Family to Generate for ", family)
 	match family:
 		"pokemart":
 			if randi_range(0, 10) != 10:
@@ -118,10 +215,111 @@ func find_family(family):
 				return "fossil"
 			else:
 				return "stone"
+		"industry":
+			return "vending"
+		"vending":
+			return "drink"
+		"game":
+			return "ruins"
+		"fossil":
+			return "fossil"
+		"chest":
+			if level < 5:
+				var chance = randi_range(0,10)
+				if chance < 5:
+					return "pokemart"
+				else:
+					return "ruins"
+			else:
+				var chance = randi_range(0,20)
+				if chance < 5:
+					return "pokemart"
+				elif chance > 5 and chance < 10:
+					return "ruins"
+				else:
+					return "industry"
 		_:
 			print("GB Find_Family Error!")
 			return "error"
 	#pass
+
+func merge_pieces(cell, prev_cell):
+	print("=== GB Merging ", cell, " and ", prev_cell, " ===")
+	if all_pieces[game_board[cell]].increment_texture(): 
+		print("=== GB Merging ", cell, " incremented ===")
+		#returns FALSE = NOT at max_texture for that family.
+		#If it's NOT max_texture, we continue to affect the game_board.
+		if all_pieces[game_board[cell]].texture_index > 3:
+			var empty_cell = find_empty_cell()
+			if  empty_cell != Empty:
+				print(" == GB Releasing Crystal == ")
+				make_piece("crystal", 1) #Crystals are the experience points of the game.
+				place_piece(all_pieces.size()-1,empty_cell,Empty)
+			else:
+				print(" = GB No Crystal! Game board full! = ")
+		else:
+			print(" = GB Texture_index = ", all_pieces[game_board[cell]].texture_index)
+		remove_piece(prev_cell)
+	else:
+		print(" == GB Texture NOT incremented. Max texture!")
+
+func generate_piece(click, click_family):
+	var closest_empty_cell = find_closest_empty_cell(click)
+	if  closest_empty_cell != Empty:
+		var family = find_family(click_family)
+		if  family != "error":
+			make_piece(family, 1)
+			place_piece(all_pieces.size()-1,closest_empty_cell,Empty)
+		else:
+			print("   GB Piece NOT Generated. Family = ERROR!")
+	else:
+		print("   GB ", click_family, " Failed. Game board full!")
+
+func remove_piece(cell_id):
+	print("== GB Removing Piece @ ", cell_id)
+	game_board[cell_id] = Empty
+	for i in range(all_pieces.size()):
+		if all_pieces[i].id == cell_id:
+			print("   Piece ID Removed = ", all_pieces[i].id)
+			all_pieces[i].queue_free()
+			all_pieces.pop_at(i)
+			break
+		else:
+			#print (all_cells[i].id, " != ", previous_click)
+			pass
+	print("   Piece Removed")
+
+func update_score(cell_id):
+	print ("== GB Updating Score == ")
+	var new_score
+	var texture_value = all_pieces[game_board[cell_id]].texture_index
+	new_score = (texture_value * 2) + (texture_value + 1)
+	print ("   GB Score to be added = ", new_score)
+	score += new_score
+	print("   GB Updated Score = ", score, " & Level_score = ", level_score)
+	if score >= level_score:
+		print("   GB Level Up Granted!")
+		if find_empty_cell() != Empty:
+			make_piece("chest", 1) #Crystals are the experience points of the game.
+			place_piece(all_pieces.size()-1,find_empty_cell(),Empty)
+		else:
+			print("   GB No Chest! Game board full!")
+		score = score - level_score
+		level += 1
+		level_score = level * 10
+	else:
+		print("  GB Score < level_score")
+	display_score()
+	pass
+
+func display_score():
+	print ("== GB Displaying Score == ")
+	var prog_value = 0.0 
+	$prog_score.max_value = level_score
+	$lblLevel.text = "Level " + str(level) + ": "
+	$prog_score.value = score
+	$lblScore.text = "Score " + str(score) + " of "+ str(level_score)
+	print("   Score = ", score, " Level = ", level)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -129,94 +327,140 @@ func _process(_delta):
 	pass
 
 func _input(event):
-	if event.is_action_pressed("left_mouse_click"):
-		#print("GB Click Location: ", to_local(event.position))
-		pass
+	pass
 	
-func _on_cell_clicked(cell_id, event):
-	# cell_id = current click
-	var previous_click = Vector2()
-	print("~~~~GB On Cell Clicked = ", cell_id, "~~~~")
-	clicked_array.append(cell_id)
+func _on_cell_clicked(click, event):
+	var is_left_click = false
+	var is_1st_click = false
+	var is_same_cell = false
+	var is_same_texture = false
+	var is_same_family = false
+	var is_generator = false
+	var is_max_texture = false
+	
+	var pclick_family
+	var pclick_texture
+	var pclick_empty
+	
+	var click_family
+	var click_empty
+	var click_texture
+	var click_generator
+	
+	print("~~~~ GB On Cell Clicked @ ", click, "~~~~")
 	#print("Cell Position = ", cell_location[cell_id])
 	if event.is_action_pressed("left_mouse_click"):
-		#print ("GB OnCell Left Click")
-		$active_selection.position = cell_location[cell_id]
+		print (" == GB Initializing Click_* ")
+		$active_selection.position = cell_location[click]
 		$active_selection.visible = true
-		if clicked_array.size() > 1:
-			previous_click = clicked_array[-2]
-			print("GB Previous_click = ", previous_click)
-			if clicked_array.has(cell_id) and game_board[cell_id] != Empty:
-				print("GB Cell is occupied.")
-				if game_board[previous_click] != Empty and previous_click != cell_id:
-					print("GB Both cells are occupied.")
-					if all_pieces[game_board[cell_id]].texture_index == all_pieces[game_board[previous_click]].texture_index:
-						print("GB Both cells have the same texture.")
-						if all_pieces[game_board[cell_id]].family == all_pieces[game_board[previous_click]].family:
-							all_pieces[game_board[cell_id]].increment_texture()
-							game_board[previous_click] = Empty
-							print("GB all_pieces.size = ", all_pieces.size())
-							for i in range(all_pieces.size()):
-								if all_pieces[i].id == previous_click:
-									print("GB Piece ID Removed = ", all_pieces[i].id)
-									all_pieces[i].queue_free()
-									all_pieces.pop_at(i)
-									break
-								else:
-									#print (all_cells[i].id, " != ", previous_click)
-									pass
-						else: 
-							print("==GB Pieces are different families==")
-							print("Cell family = ", all_pieces[game_board[cell_id]].family)
-							print("Previous Cell family = ", all_pieces[game_board[previous_click]].family)
-							#swap_pieces(cell_id, previous_click)
-					else: 
-						print("GB Pieces are in different textures")
-						#swap_pieces(cell_id, previous_click)
-				elif previous_click == cell_id:
-					print("!!!It's a generator = ", all_pieces[game_board[cell_id]].generator, "!!!")
-					if all_pieces[game_board[cell_id]].generator:
-						if find_empty_cell() != Empty:
-							make_piece(find_family(all_pieces[game_board[cell_id]].family), 1)
-							place_piece(all_pieces.size()-1,find_empty_cell(),Empty)
-						else:
-							print("Game board full!")
-				else:
-					print("GB ", previous_click, " was empty")
-			else:
-				print("~~~GB Cell #", cell_id, " is Empty~~~")
-				if game_board[previous_click] != Empty:
-					for i in range(all_pieces.size()):
-						#print("GB Piece name = ", all_pieces[i].id)
-						if all_pieces[i].id == previous_click:
-							place_piece(i, cell_id, previous_click)
-							break
-						else:
-							#print (all_cells[i].id, " != ", previous_click)
-							pass
-					pass
-			print("GB All_pieces = ", all_pieces)
-			update_game_board()
-			print("GB Game_board = ", game_board)
+		is_left_click = true
+		click_family = all_pieces[game_board[click]].family
+		click_texture = all_pieces[game_board[click]].texture_index
+		click_generator = all_pieces[game_board[click]].generator
+		if all_pieces[game_board[click]].gen_count > Empty:
+			is_generator = true
+			
+		if game_board[click] == Empty:
+			click_empty = true
+			$lblItemInfo.text = default_iteminfo
 		else:
-			print("GB First Click!")
+			click_empty = false
+			$lblItemInfo.bbcode_enabled = true
+			$lblItemInfo.text = all_pieces[game_board[click]].get_iteminfo()
+	
+
 	elif event.is_action_pressed("right_mouse_click"):
-		print ("~~~GB OnCell Right Click~~~")
-		print("GB Clicked Array = ", clicked_array)
+		print (" == GB OnCell Right Click ~~~")
 		$active_selection.visible = false
-		clicked_array.clear()
+		previous_click = null
+		print("  GB Previous_Click = ", previous_click)
 	else:
 		pass
-	pass # Replace with function body.
 
-func _on_activate_generator(id):
-	var cell_id = id
-	var piece_id = game_board[id]
-	print("~~~GB Activate Generator~~~")
-	print("GB Cell Position = ", cell_location[cell_id])
-	print("GB Piece Position = ", all_pieces[piece_id].position)
+	if is_left_click and !is_1st_click and previous_click != null:
+		print("  GB Initializing PClick_* ")
+		if game_board[previous_click] == Empty:
+			pclick_empty = true
+			pclick_family = ""
+			pclick_texture = Empty
+		else:
+			pclick_empty = false
+			pclick_family = all_pieces[game_board[previous_click]].family
+			pclick_texture = all_pieces[game_board[previous_click]].texture_index
+	else:
+		print("  GB First Click!")
+		is_1st_click = true
 	
-	#all_pieces[piece_id].get_node("active").position = to_local(all_pieces[piece_id].position)
-	all_pieces[piece_id].get_node("active").visible = true
-	all_pieces[piece_id].generator = true
+	if click_empty and !pclick_empty and !is_1st_click and previous_click != null and !immobile.has(pclick_family):
+		print("~~~GB ", click, " is Empty and ", previous_click, "is not empty.~~~")
+		print("   GB Move to MT Cell")
+		place_piece(game_board[previous_click], click, previous_click)
+	
+	if !is_1st_click: 
+		if !click_empty and !pclick_empty and previous_click != click:
+			print("   GB Both cells are occupied AND clicks are NOT the same cell")
+		elif previous_click == click:
+			is_same_cell = true
+			print("  GB PClick = Click")
+			if is_generator:
+				print("  GB ", click_family, " Generating")
+				generate_piece(click, click_family)
+				var gencount = all_pieces[game_board[click]].decrement_gen_count()
+				print("  GB Generator Direction = ", click_generator)
+				if click_generator == "forward":
+					if gencount == Empty:
+						all_pieces[game_board[click]].deactivate_generator()
+						print("   GB Generator Waiting to Recharge.")
+					else:
+						print("   GB ", click_family, " gen_count = ", gencount)
+				elif click_generator == "reverse": 
+					if gencount == Empty:
+						remove_piece(click)
+						print("   GB Generator Removed.")
+					else:
+						print("   GB ", click_family, " gen_count = ", gencount)
+				else:
+					print("GB ", click_family, " is not a generator")
+			else:
+				print("  GB ", click_family, " is NOT a generator")
+				if click_family == "crystal":
+					print("   GB Crystal Clicked Twice!")
+					update_score(click)
+					remove_piece(click)
+		else:
+			print("  GB Previous_click @ ", previous_click, " was empty")
+
+	print(" = GB Click_texture = ", click_texture, " and pclick_texture = ", pclick_texture)
+	if click_texture == pclick_texture:
+		print("  GB Pieces have the SAME texture")
+		is_same_texture = true
+	else: 
+		print("  GB Pieces have DIFFERENT textures")
+		#swap_pieces(cell_id, previous_click)
+
+	print(" = GB Click_family = ", click_family, " and pclick_family = ", pclick_family)
+	if click_family == pclick_family:
+		print("  GB Pieces are the SAME family")
+		is_same_family = true
+	else: 
+		print("  GB Pieces are DIFFERENT families")
+		#swap_pieces(cell_id, previous_click)
+	
+	if !unmergeable.has(click_family) and !is_1st_click and !is_same_cell and is_same_family and is_same_texture and !click_empty:
+		print("  GB Mergeable!")
+		merge_pieces(click, previous_click)
+		update_game_board()
+		var FCF = find_closest_family(click, "grass")
+		print("  GB Closest Grass is ", FCF)
+		if FCF != Empty:
+			remove_piece(FCF)
+			update_game_board()
+			var family = find_family(click_family)
+			if  family != "error":
+				generate_piece(FCF, family)
+
+	if is_left_click:
+		previous_click = click
+	#print("GB All_pieces = ", all_pieces)
+	update_game_board()
 	pass # Replace with function body.
