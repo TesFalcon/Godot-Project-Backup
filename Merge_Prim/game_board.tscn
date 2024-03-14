@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://ceumlim1hwcwd"]
+[gd_scene load_steps=11 format=3 uid="uid://ceumlim1hwcwd"]
 
 [ext_resource type="Script" path="res://game_board.gd" id="1_nv5dv"]
 [ext_resource type="PackedScene" uid="uid://cmsgi3hl35jmg" path="res://game_cell.tscn" id="2_hmj2v"]
@@ -6,6 +6,15 @@
 [ext_resource type="PackedScene" uid="uid://o8h5a4ftk7tk" path="res://game_piece.tscn" id="3_ht7x7"]
 [ext_resource type="Texture2D" uid="uid://bvt787478pkcy" path="res://PokeMerge/cartoon_land_3.png" id="5_xi7l5"]
 [ext_resource type="Texture2D" uid="uid://cdg00anw222ol" path="res://PokeMerge/grass01_64.png" id="6_du7tg"]
+[ext_resource type="Texture2D" uid="uid://cb5tx7mdocdrp" path="res://PokeMerge/notebook.png" id="7_c3yha"]
+[ext_resource type="Script" path="res://Notebook.gd" id="8_o5jng"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yldny"]
+bg_color = Color(0.6, 0.345098, 0.6, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_48bqf"]
+content_margin_left = 2.0
+bg_color = Color(0.6, 0.34902, 0.513726, 1)
 
 [node name="GameBoard" type="Node2D"]
 script = ExtResource("1_nv5dv")
@@ -27,30 +36,61 @@ position = Vector2(365, 129)
 scale = Vector2(0.686111, 0.682813)
 texture = ExtResource("5_xi7l5")
 
-[node name="lblLevel" type="Label" parent="."]
-offset_left = 27.0
-offset_top = 18.0
-offset_right = 73.0
-offset_bottom = 41.0
-text = "Level:"
-
-[node name="prog_score" type="ProgressBar" parent="."]
-offset_left = 91.0
-offset_top = 16.0
-offset_right = 304.0
-offset_bottom = 43.0
-
-[node name="lblItemInfo" type="RichTextLabel" parent="."]
-offset_left = 313.0
-offset_top = 9.0
-offset_right = 711.0
-offset_bottom = 96.0
-
 [node name="grass" type="Sprite2D" parent="."]
 texture = ExtResource("6_du7tg")
 
-[node name="lblScore" type="Label" parent="."]
+[node name="Notebook" type="Sprite2D" parent="."]
+position = Vector2(21, 509)
+scale = Vector2(1.28179, 1.50528)
+texture = ExtResource("7_c3yha")
+centered = false
+script = ExtResource("8_o5jng")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="lblScore" type="Label" parent="Control"]
+layout_mode = 0
 offset_left = 5.0
 offset_top = 52.0
 offset_right = 169.0
 offset_bottom = 75.0
+
+[node name="lblItemInfo" type="RichTextLabel" parent="Control"]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 9.0
+offset_right = 711.0
+offset_bottom = 115.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_yldny")
+bbcode_enabled = true
+shortcut_keys_enabled = false
+
+[node name="prog_score" type="ProgressBar" parent="Control"]
+layout_mode = 0
+offset_left = 67.0
+offset_top = 13.0
+offset_right = 280.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+value = 74.0
+
+[node name="lblLevel" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 14.0
+offset_right = 59.0
+offset_bottom = 37.0
+text = "Level:"
+
+[node name="lblInstructions" type="RichTextLabel" parent="Control"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 98.0
+offset_right = 243.0
+offset_bottom = 504.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_48bqf")
