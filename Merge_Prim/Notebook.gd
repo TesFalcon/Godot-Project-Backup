@@ -1,9 +1,10 @@
 extends Sprite2D
 
-var pokemerge_page = "[center][p]Welcome to PokeMerge![/p][/center]
-			[p]In the world of Pokemon, it's easy to think of it as just a game, but it's so much more. Here we will explore the fossil evidence of ancient dinosaurs, the commercialization of pokemon capture, and ask the all-important question ...[/p] [p][b][i]CAN YOU CATCH 'EM ALL?[/i][/b][/p]
-			[p]To learn more, click the Notebook below.[/p]"
-var game_page = "[center][p]It's Just a Game[/p][/center]"
+var pokemerge_page = "[p][center][b]Welcome to PokeMerge![/b][/center][/p]
+			[p]In the world of Pokemon, it's easy to think of it as just a game, but it's so much more. Here we will explore the fossil evidence of ancient dinosaurs, the commercialization of pokemon capture, and ask the all-important question ...[/p] [p][center][b][i]CAN YOU CATCH 'EM ALL?[/i][/b][/center][/p]
+			[p]To learn more, click the Arrows below.[/p]
+			[p]To mirror a page to the right side of the screen, click the Notebook.[/p]"
+var game_page = "[p][center]It's Just a Game[/center][/p]"
 var ruins_page = "[center][p]What's In These Ruins[/p][/center]"
 var fossil_page = "[center][p]I Found a Fossil![/p][/center]"
 var pokemart_page = "[center][p]The World of Pokemart[/p][/center]"
@@ -11,9 +12,6 @@ var pokeball_page = "[center][p]Pokeballs in All Their Variety[/p][/center]"
 var heal_page = "[center][p]Healing Salves and Lotions[/p][/center]"
 var stone_page = "[center][p]Precious Stones[/p][/center]"
 var crystal_page = "[center][p]Experience Point Crystals[/p][/center]"
-var industry_page = "[center][p]Industrialization of Modern Life[/p][/center]"
-var vending_page = "[center][p]Vending Machines are Everywhere[/p][/center]"
-var drink_page = "[center][p]Thirsty? Get a drink![/p][/center]"
 var rock_page = "[center][p]Super XP with Special Rocks[/p][/center]"
 var bulbasaur_page = "[center][p]Bulbasaur[/p][/center]"
 var squirtle_page = "[center][p]Squirtle[/p][/center]"
@@ -28,8 +26,7 @@ var legend_stats = {}
 
 var page = []
 var current_page = -1
-var game_piece = preload("res://game_piece.tscn")
-var game_piece_family = []
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	page.append("pokemerge")
@@ -54,12 +51,6 @@ func _ready():
 	Notebook["pokeball"] = pokeball_page + get_family_tree("pokeball")
 	page.append("heal")
 	Notebook["heal"] = heal_page + get_family_tree("heal")
-	#page = industry_page + get_family_tree("industry")
-	#Notebook.append(page)
-	#page = vending_page + get_family_tree("vending")
-	#Notebook.append(page)
-	#page = drink_page + get_family_tree("drink")
-	#Notebook.append(page)
 	page.append("rock")
 	Notebook["rock"] = rock_page + get_family_tree("rock")
 	page.append("bulbasaur")
@@ -79,22 +70,25 @@ func _ready():
 	page.append("stats")
 	Notebook["stats"] = get_stats()
 	
-	current_page += 1
 	next_page()
-	pass # Replace with function body.
 
 func _input(event):
 	if event.is_action_pressed("left_mouse_click"):
 		if get_rect().has_point(to_local(event.position)):
 			print("Notebook Left Mouse Clicked")
-			current_page += 1
-			next_page()
+			mirror_to_lblStatic()
 	pass
 
 func next_page():
+	current_page += 1
 	if current_page >= Notebook.size():
 		current_page = 0 
-	get_parent().get_node("Control/lblInstructions").bbcode_enabled = true
+	get_parent().get_node("Control/lblInstructions").text = Notebook[page[current_page]]
+
+func previous_page():
+	current_page -= 1
+	if current_page < 0:
+		current_page = Notebook.size()-1 
 	get_parent().get_node("Control/lblInstructions").text = Notebook[page[current_page]]
 
 func get_family_tree(family):
@@ -120,14 +114,35 @@ func get_stats():
 		stats += "[p] " + get_parent().get_node("GamePiece").get_img("legendary",i) +  " = " + str(legend_stats[i]) + "[/p]"
 	return "[center]" + stats + "[/center]"
 
-func update_stats(texture, fam):
+func update_stats(tex_index, fam):
 	match fam:
 		"bulbasaur":
-			bulb_stats[texture] += 1
+			bulb_stats[tex_index] += 1
 		"squirtle":
-			squirtle_stats[texture] += 1
+			squirtle_stats[tex_index] += 1
 		"charmander":
-			char_stats[texture] += 1
+			char_stats[tex_index] += 1
 		"legendary":
-			legend_stats[texture] += 1
+			legend_stats[tex_index] += 1
 	Notebook["stats"] = get_stats()
+
+func mirror_to_lblStatic():
+	get_parent().get_node("Control/lblStatic").text = Notebook[page[current_page]]
+
+func refresh():
+	get_parent().get_node("Control/lblInstructions").text = Notebook[page[current_page]]
+
+func is_max_texture(fam, tex_index):
+	match fam:
+		"bulbasaur":
+			if tex_index == bulb_stats.size():
+				return true
+		"squirtle":
+			if tex_index == squirtle_stats.size():
+				return true
+		"charmander":
+			if tex_index == char_stats.size():
+				return true
+		"legendary":
+			if tex_index == legend_stats.size():
+				return true

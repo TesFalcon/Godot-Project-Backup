@@ -1,47 +1,69 @@
-[gd_scene load_steps=11 format=3 uid="uid://ceumlim1hwcwd"]
+[gd_scene load_steps=26 format=3 uid="uid://ceumlim1hwcwd"]
 
 [ext_resource type="Script" path="res://game_board.gd" id="1_nv5dv"]
+[ext_resource type="Texture2D" uid="uid://dfotvnpn0cg22" path="res://PokeMerge/elven_ruins_road_1280.png" id="2_g46kt"]
 [ext_resource type="PackedScene" uid="uid://cmsgi3hl35jmg" path="res://game_cell.tscn" id="2_hmj2v"]
 [ext_resource type="Texture2D" uid="uid://iwb07nn160qt" path="res://PokeMerge/selection_64.png" id="3_grnud"]
 [ext_resource type="PackedScene" uid="uid://o8h5a4ftk7tk" path="res://game_piece.tscn" id="3_ht7x7"]
-[ext_resource type="Texture2D" uid="uid://bvt787478pkcy" path="res://PokeMerge/cartoon_land_3.png" id="5_xi7l5"]
 [ext_resource type="Texture2D" uid="uid://cdg00anw222ol" path="res://PokeMerge/grass01_64.png" id="6_du7tg"]
 [ext_resource type="Texture2D" uid="uid://cb5tx7mdocdrp" path="res://PokeMerge/notebook.png" id="7_c3yha"]
 [ext_resource type="Script" path="res://Notebook.gd" id="8_o5jng"]
+[ext_resource type="Texture2D" uid="uid://3pm5cs70255d" path="res://PokeMerge/arrow_64.png" id="9_7pfm6"]
+[ext_resource type="Script" path="res://RtArrow.gd" id="10_jrs2b"]
+[ext_resource type="Script" path="res://LtArrow.gd" id="11_3x0f8"]
+[ext_resource type="Texture2D" uid="uid://bolmrxh7tvyrh" path="res://PokeMerge/pokebelt.png" id="12_tgeti"]
+[ext_resource type="Texture2D" uid="uid://bqxlkj4388mfk" path="res://PokeMerge/backpack blue w brown.png" id="13_qkdkx"]
+[ext_resource type="AudioStream" uid="uid://bvf112kj5gtes" path="res://Audio/Observation.mp3" id="14_e5y6b"]
+[ext_resource type="AudioStream" uid="uid://dhhbh7uwqeqo" path="res://Audio/Retro Swooosh 07.wav" id="15_l0ojv"]
+[ext_resource type="AudioStream" uid="uid://ml45h3woeg5g" path="res://Audio/GP_Select_1.wav" id="16_6xnku"]
+[ext_resource type="AudioStream" uid="uid://p60tftm6jsfy" path="res://Audio/GP_Heal_1.wav" id="17_r6024"]
+[ext_resource type="AudioStream" uid="uid://bte33303kcnbu" path="res://Audio/GP_Draw_2.wav" id="18_4dwco"]
+[ext_resource type="AudioStream" uid="uid://bu876tyim737u" path="res://Audio/beast-roar-13.mp3" id="19_g8i4n"]
+[ext_resource type="AudioStream" uid="uid://bm6xnaspe1lxu" path="res://Audio/Backpack_Medium_Polyester_Drop_Stereo.wav" id="20_fnqsf"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_d7a5a"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yldny"]
-bg_color = Color(0.6, 0.345098, 0.6, 1)
+bg_color = Color(0.364706, 0.498039, 0.34902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dm5m3"]
+bg_color = Color(0.419608, 0.678431, 0.345098, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_48bqf"]
 content_margin_left = 2.0
-bg_color = Color(0.6, 0.34902, 0.513726, 1)
+bg_color = Color(0.345098, 0.466667, 0.270588, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_akvbs"]
+bg_color = Color(0.345098, 0.466667, 0.270588, 1)
 
 [node name="GameBoard" type="Node2D"]
 script = ExtResource("1_nv5dv")
 
+[node name="ElvenRuinsRoad1280" type="Sprite2D" parent="."]
+position = Vector2(639, 364)
+texture = ExtResource("2_g46kt")
+
 [node name="game_cell" parent="." instance=ExtResource("2_hmj2v")]
-position = Vector2(-106, -128)
+material = SubResource("CanvasItemMaterial_d7a5a")
+position = Vector2(966, 236)
 
 [node name="active_selection" type="Sprite2D" parent="."]
 z_index = 1
 z_as_relative = false
+position = Vector2(714, 163)
 texture = ExtResource("3_grnud")
 centered = false
 
 [node name="GamePiece" parent="." instance=ExtResource("3_ht7x7")]
 position = Vector2(-28, -142)
 
-[node name="CartoonLand3" type="Sprite2D" parent="."]
-position = Vector2(365, 129)
-scale = Vector2(0.686111, 0.682813)
-texture = ExtResource("5_xi7l5")
-
 [node name="grass" type="Sprite2D" parent="."]
+position = Vector2(605, 202)
 texture = ExtResource("6_du7tg")
 
 [node name="Notebook" type="Sprite2D" parent="."]
-position = Vector2(21, 509)
-scale = Vector2(1.28179, 1.50528)
+position = Vector2(107, 559)
+scale = Vector2(1.12414, 0.993103)
 texture = ExtResource("7_c3yha")
 centered = false
 script = ExtResource("8_o5jng")
@@ -49,48 +71,111 @@ script = ExtResource("8_o5jng")
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = -2.0
+offset_top = -4.0
+offset_right = 38.0
+offset_bottom = 36.0
 
 [node name="lblScore" type="Label" parent="Control"]
 layout_mode = 0
-offset_left = 5.0
-offset_top = 52.0
-offset_right = 169.0
-offset_bottom = 75.0
+offset_left = 77.0
+offset_top = 22.0
+offset_right = 206.0
+offset_bottom = 45.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Score 00 of 000"
 
 [node name="lblItemInfo" type="RichTextLabel" parent="Control"]
 layout_mode = 0
-offset_left = 288.0
-offset_top = 9.0
-offset_right = 711.0
-offset_bottom = 115.0
+offset_left = 916.0
+offset_top = 20.0
+offset_right = 1267.0
+offset_bottom = 155.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_yldny")
 bbcode_enabled = true
 shortcut_keys_enabled = false
 
 [node name="prog_score" type="ProgressBar" parent="Control"]
 layout_mode = 0
-offset_left = 67.0
-offset_top = 13.0
-offset_right = 280.0
-offset_bottom = 40.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+offset_left = 392.0
+offset_top = 19.0
+offset_right = 883.0
+offset_bottom = 46.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/background = SubResource("StyleBoxFlat_dm5m3")
 value = 74.0
 
 [node name="lblLevel" type="Label" parent="Control"]
 layout_mode = 0
-offset_left = 13.0
-offset_top = 14.0
-offset_right = 59.0
-offset_bottom = 37.0
+offset_left = 314.0
+offset_top = 27.0
+offset_right = 360.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Level:"
 
 [node name="lblInstructions" type="RichTextLabel" parent="Control"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 98.0
-offset_right = 243.0
-offset_bottom = 504.0
+offset_left = 10.0
+offset_top = 72.0
+offset_right = 186.0
+offset_bottom = 555.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_48bqf")
+bbcode_enabled = true
+shortcut_keys_enabled = false
+
+[node name="lblStatic" type="RichTextLabel" parent="Control"]
+layout_mode = 0
+offset_left = 185.0
+offset_top = 73.0
+offset_right = 380.0
+offset_bottom = 555.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_akvbs")
+bbcode_enabled = true
+
+[node name="RtArrow" type="Sprite2D" parent="."]
+position = Vector2(319, 613)
+texture = ExtResource("9_7pfm6")
+script = ExtResource("10_jrs2b")
+
+[node name="LtArrow" type="Sprite2D" parent="."]
+position = Vector2(58, 613)
+texture = ExtResource("9_7pfm6")
+flip_h = true
+script = ExtResource("11_3x0f8")
+
+[node name="Pokebelt" type="Sprite2D" parent="."]
+position = Vector2(1089.5, 189)
+scale = Vector2(1.44492, 1)
+texture = ExtResource("12_tgeti")
+
+[node name="BackpackBlueWBrown" type="Sprite2D" parent="."]
+position = Vector2(1101, 508)
+scale = Vector2(0.817881, 0.82)
+texture = ExtResource("13_qkdkx")
+
+[node name="Ambient" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("14_e5y6b")
+volume_db = -18.0
+autoplay = true
+
+[node name="snd_Merge" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("15_l0ojv")
+
+[node name="snd_XP" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("16_6xnku")
+
+[node name="snd_Recharge" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_r6024")
+
+[node name="snd_Generate" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_4dwco")
+
+[node name="snd_NewDino" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("19_g8i4n")
+
+[node name="snd_Backpack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("20_fnqsf")

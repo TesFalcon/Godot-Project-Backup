@@ -25,7 +25,7 @@ const pokeball_textures = ["res://pokemerge/pokeball01_64.png",
 "res://pokemerge/pokeball04_64.png","res://pokemerge/pokeball05_64.png",
 "res://pokemerge/pokeball06_64.png","res://pokemerge/pokeball07_64.png",
 "res://pokemerge/pokeball08_64.png","res://pokemerge/pokeball09_64.png",
-"res://pokemerge/pokeball10_64.png","res://pokemerge/pokeball11_64.png"]
+"res://pokemerge/pokeball10_64.png"]
 
 const heal_textures = ["res://pokemerge/heal01_64.png", 
 "res://pokemerge/heal02_64.png","res://pokemerge/heal03_64.png",
@@ -39,27 +39,11 @@ const fossil_textures = ["res://pokemerge/fossil01_64.png",
 const stone_textures = ["res://pokemerge/stone01_64.png", 
 "res://pokemerge/stone02_64.png","res://pokemerge/stone03_64.png",
 "res://pokemerge/stone04_64.png","res://pokemerge/stone05_64.png",
-"res://pokemerge/stone06_64.png","res://pokemerge/stone07_64.png",
-"res://pokemerge/stone08_64.png","res://pokemerge/stone09_64.png",
-"res://pokemerge/stone10_64.png"]
-
-const drink_textures = ["res://pokemerge/drink01_64.png", 
-"res://pokemerge/drink02_64.png","res://pokemerge/drink03_64.png",
-"res://pokemerge/drink04_64.png","res://pokemerge/drink05_64.png",
-"res://pokemerge/drink06_64.png","res://pokemerge/drink07_64.png"]
+"res://pokemerge/stone06_64.png"]
 
 const crystal_textures = ["res://pokemerge/crystal01_64.png", 
 "res://pokemerge/crystal02_64.png","res://pokemerge/crystal03_64.png",
 "res://pokemerge/crystal04_64.png","res://pokemerge/crystal05_64.png"]
-
-const industry_textures = ["res://pokemerge/industry01_64.png", 
-"res://pokemerge/industry02_64.png","res://pokemerge/industry03_64.png",
-"res://pokemerge/industry04_64.png","res://pokemerge/industry05_64.png",
-"res://pokemerge/industry07_64.png","res://pokemerge/industry07_64.png",
-"res://pokemerge/industry08_64.png","res://pokemerge/industry09_64.png"]
-
-const vending_textures = ["res://pokemerge/vending01_64.png", 
-"res://pokemerge/vending02_64.png","res://pokemerge/vending03_64.png"]
 
 const ruins_textures = ["res://pokemerge/ruins01_64.png", 
 "res://pokemerge/ruins02_64.png","res://pokemerge/ruins03_64.png", #Yes, ruins04 is skipped.
@@ -173,15 +157,17 @@ func max_texture():
 		if texture_index == series[family].size() - 1:
 			#texture_index at the max for that family.
 			if family != "grass":
-				$max.visible = true
-				$max.position = to_local(position) + Vector2(0,30)
-				$max.scale = Vector2(0.75, 0.75)
+				if !$max.visible:
+					$max.visible = true
+					$max.position = to_local(position) + Vector2(0,30)
+					$max.scale = Vector2(0.75, 0.75)
 			return true
 		else:
 			return false
 
 func activate_generator():
 	print("= GP Activate_Generator = ")
+	$snd_Activate.play()
 	#Hide the wait stopwatch if it was visible
 	$wait.visible = false
 	
@@ -257,7 +243,11 @@ func get_iteminfo():
 			item_text += "[p] Merge two lvl " + str(texture_index+1) + ": [img]" + series[family][texture_index] + "[/img]"
 			item_text += " ==> lvl " + str(texture_index+2) + ": [img]" + series[family][texture_index+1] + "[/img] [/p]"
 		else:
-			item_text += "[p]At Maximum Merge Level[/p]"
+			item_text += "[p][center]At Maximum Merge Level[/center][/p]"
+			if family == "heal":
+				item_text+= "[p][center]Click again to reset your generators.[/center][/p]"
+			if family == "stone":
+				item_text+= "[p][center]Merge w Pokemon to split into 2 lesser Pokemon.[/center][/p]"
 		return "[center]" + item_text + "[/center]"
 
 func throb():
@@ -321,10 +311,13 @@ func capture_tree():
 	return "[center]" + cap_tree + "[/center]"
 
 func init_stats(fam):
-	var init_stats = {}
+	var stats = {}
 	for i in range(series[fam].size()):
-		init_stats[i] = 0
-	return init_stats
+		stats[i] = 0
+	return stats
 
 func get_img(fam, index):
 	return "[img]" + series[fam][index] + "[/img]"
+
+func wait_visible():
+	return $wait.visible

@@ -7,7 +7,7 @@ signal clicked(my_name)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#$cell.position = Vector2(100,100)
-	$cell.texture = load("res://PokeMerge/cell_64.png")
+	#$cell.texture = load("res://PokeMerge/cell_64_green.png")
 	$cell.visible = true
 	pass # Replace with function body.
 

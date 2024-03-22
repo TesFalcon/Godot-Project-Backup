@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cmsgi3hl35jmg"]
 
-[ext_resource type="Texture2D" uid="uid://bw8g546gs0opi" path="res://PokeMerge/cell_64.png" id="2_4i463"]
+[ext_resource type="Texture2D" uid="uid://hnd1vfwj8uuo" path="res://PokeMerge/cell_64_green.png" id="2_5ajsn"]
 [ext_resource type="Script" path="res://game_cell.gd" id="2_dw2rj"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ft7li"]
@@ -10,7 +10,7 @@ size = Vector2(57, 59)
 script = ExtResource("2_dw2rj")
 
 [node name="cell" type="Sprite2D" parent="."]
-texture = ExtResource("2_4i463")
+texture = ExtResource("2_5ajsn")
 centered = false
 
 [node name="Area2D" type="Area2D" parent="."]
