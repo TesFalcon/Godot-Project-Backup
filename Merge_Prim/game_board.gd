@@ -1,53 +1,53 @@
 extends Node2D
 
-var height = 9
-var width = 8
-var max_cells = height * width
-var game_board = [] #-1 = Empty cell. Number = piece
-var Empty = -1
+var height : int = 9
+var width : int = 8
+var max_cells : int = height * width
+var game_board : Array[int] #-1 = Empty cell. Number = piece
+var Empty : int = -1
 
 var tween
-var board_rect = Rect2i()
+var board_rect := Rect2i()
 
-var cell = preload("res://game_cell.tscn")
-var cell_location = []
-var all_cells = []
+var cell : PackedScene = preload("res://game_cell.tscn")
+var cell_location := []
+var all_cells := []
 
 # dino holding cells for after the pokemon are captured.
-var holding_height = 2
-var holding_width = 3
-var holding_max_cells = holding_height * holding_width
-var holding_cells = [] # Equivalent of all_cells
-var holding_locations = [] # Equivalent of cell_locations
-var holding_pieces = [] # Equivalent of all_pieces
+var holding_height : int = 2
+var holding_width : int = 3
+var holding_max_cells : int = holding_height * holding_width
+var holding_cells := [] # Equivalent of all_cells
+var holding_locations := [] # Equivalent of cell_locations
+var holding_pieces := [] # Equivalent of all_pieces
 
-signal clicked(cell_name, event)
+#signal clicked(cell_name, event)
 var previous_click #To determine what the last move was
 
-var game_piece = preload("res://game_piece.tscn")
-var all_pieces = []
+var game_piece : PackedScene = preload("res://game_piece.tscn")
+var all_pieces := []
 
-var score = 0
-var level = 1
-var level_score = level * 10
+var score : int = 0
+var level : int = 1
+var level_score : int = level * 10
 
-var bulb_count = 0
-var bulb_highest = -1
-var squirtle_count = 0
-var squirtle_highest = -1
-var char_count = 0
-var char_highest = -1
-var legend_count = 0
-var legend_highest = -1
-var next_legend = -2 #Initialize to less than Empty. First action is to increment to Empty.
+var bulb_count : int = 0
+var bulb_highest : int = -1
+var squirtle_count : int = 0
+var squirtle_highest : int = -1
+var char_count : int = 0
+var char_highest : int = -1
+var legend_count : int = 0
+var legend_highest : int = -1
+var next_legend : int = Empty - 1 #Initialize to less than Empty. First action is to increment to Empty.
 
-const generators = ["pokemart", "ruins", "game"] # "industry", 
-const reverse_generators = ["chest"]# , "vending"
-const immobile = ["grass"]
-const unmergeable = ["chest", "grass"]
-const dino = ["bulbasaur", "charmander", "squirtle", "legendary"]
+const generators : Array = ["pokemart", "ruins", "game"] # "industry",
+const reverse_generators : Array = ["chest"]# , "vending"
+const immobile : Array = ["grass"]
+const unmergeable : Array = ["chest", "grass"]
+const dino : Array = ["bulbasaur", "charmander", "squirtle", "legendary"]
 
-const default_iteminfo = "Click a piece to get more info."
+const default_iteminfo : String = "Click a piece to get more info."
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -76,17 +76,17 @@ func make_cells():
 
 func make_gameboard():
 	#print(" === GB Making Gameboard ===")
-	var start_position_x
-	var start_position_y = $Control/lblInstructions.position.y
-	var cell_num = 0
-	var cell_size = 0 
+	var start_position_x : int
+	var start_position_y : int = $Control/lblInstructions.position.y
+	var cell_num : int = 0
+	var cell_size : int = 0
 	cell_size = all_cells[0].get_node("cell").get_rect().size.x
 	#Game is setup for a screen width of 1280.
 	start_position_x = (1280 - (cell_size * width)) / 2
-	for h in height:
-		for w in width:
-			var w_modifier = (cell_size + 1) * w  
-			var h_modifier = (cell_size + 1) * h
+	for h : int in height:
+		for w : int in width:
+			var w_modifier : int = (cell_size + 1) * w
+			var h_modifier : int = (cell_size + 1) * h
 			all_cells[cell_num].position = Vector2(start_position_x + w_modifier, start_position_y + h_modifier)
 			all_cells[cell_num].visible = true
 			cell_location.append(all_cells[cell_num].position)
@@ -133,17 +133,16 @@ func make_piece(series, quantity, texture = Empty):
 	pass
 
 func populate_gameboard():
-	var board_center = max_cells / 2
-	for cell_num in range(all_pieces.size()):
-		var closestMT = find_closest_empty_cell(board_center)
+	var board_center : int = max_cells / 2
+	for cell_num : int in range(all_pieces.size()):
+		var closestMT : int = find_closest_empty_cell(board_center)
 		place_piece(cell_num,closestMT,board_center)
 		update_game_board()
-	for cell_num in range(max_cells):
+	for cell_num : int in range(max_cells):
 		if game_board[cell_num] == Empty:
 			make_piece("grass", 1)
 			place_piece(all_pieces.size()-1, cell_num, board_center)
 	#print(" = GB Game Board initialized = ")
-	pass
 
 func place_piece(piece_id, new_cell, start_cell = Empty):
 	print("~~~GB Piece #", piece_id, " Placed @ Cell #", new_cell, "~~~")
@@ -162,13 +161,6 @@ func animate_move(piece_id, start_cell, end_cell):
 	var new_position = cell_location[end_cell] - Vector2(0,4)
 	tween.tween_property(all_pieces[piece_id], "position", new_position, 0.25)
 
-func place_grass(cell_num):
-	#print(" === GB Placing Grass ===")
-	var g = $grass.instantiate()
-	add_child(g)
-	g.position = cell_location[cell_num]
-	g.visible = true
-
 func update_game_board():
 	game_board.clear()
 	for i in range(max_cells):
@@ -178,7 +170,7 @@ func update_game_board():
 	#print("=== GB Updated Game Board: ", game_board)
 	print("=== GB Game Board Updated === ")
 
-func find_empty_cell():
+func find_empty_cell() -> int:
 	#print("== GB Finding Empty Cell")
 	for i in range(max_cells):
 		if game_board[i] == Empty:
@@ -186,9 +178,9 @@ func find_empty_cell():
 	return Empty
 	#pass
 
-func find_random_empty_cell():
+func find_random_empty_cell() -> int:
 	print("== GB Finding Random Empty Cell")
-	var cell_vectors = []
+	var cell_vectors := []
 	for i in range(max_cells):
 		if game_board[i] == Empty:
 			cell_vectors.append(i)
@@ -199,14 +191,14 @@ func find_random_empty_cell():
 		return Empty
 	#pass
 
-func find_closest_family(origin, family, max_distance):
+func find_closest_family(origin, family, max_distance) -> int:
 	#print("=== GB Finding Closest Family ===")
-	var cell_vectors = []
-	var closest_family = Empty
+	var cell_vectors := []
+	var closest_family : int = Empty
 	for i in range(max_cells):
 		if game_board[i] != Empty:
 			if all_pieces[game_board[i]].family == family and i != origin:
-				var magnitude = cell_location[origin].distance_to(cell_location[i])
+				var magnitude : float = cell_location[origin].distance_to(cell_location[i])
 				cell_vectors.append(magnitude)
 			else:
 				cell_vectors.append(5000)
@@ -226,11 +218,11 @@ func find_closest_family(origin, family, max_distance):
 	return closest_family
 	#pass
 
-func find_closest_empty_cell(origin):
+func find_closest_empty_cell(origin) -> int:
 	#print("=== GB Finding Closest Empty Cell")
 	#Make a game_board of vectors from origin to the target
-	var cell_vectors = []
-	var closest_mt_cell = Empty
+	var cell_vectors := []
+	var closest_mt_cell : int = Empty
 	
 	for i in range(max_cells):
 		if game_board[i] == Empty:
@@ -238,7 +230,7 @@ func find_closest_empty_cell(origin):
 			var cell_destination : Vector2
 			cell_origin = cell_location[origin]
 			cell_destination = cell_location[i]
-			var magnitude = cell_origin.distance_to(cell_destination)
+			var magnitude : float = cell_origin.distance_to(cell_destination)
 			cell_vectors.append(magnitude)
 		else:
 			cell_vectors.append(5000)
@@ -255,7 +247,7 @@ func find_closest_empty_cell(origin):
 	return closest_mt_cell
 	#pass
 
-func find_family(family):
+func find_family(family) -> String:
 	#print(" === GB Finding Family to Generate for ", family)
 	match family:
 		"pokemart":
@@ -285,7 +277,7 @@ func find_family(family):
 		"legendary":
 			return "legendary"
 		"chest":
-			var chance = randi_range(0,20)
+			var chance : int = randi_range(0,20)
 			if chance < 11:
 				return "pokemart"
 			else:
@@ -302,10 +294,10 @@ func merge_pieces(this_cell, prev_cell):
 		#returns FALSE = NOT at max_texture for that family.
 		#If it's NOT max_texture, we continue to affect the game_board.
 		if all_pieces[game_board[this_cell]].texture_index > 3:
-			var cellID = find_closest_empty_cell(this_cell)
+			var cellID : int = find_closest_empty_cell(this_cell)
 			if  cellID != Empty:
 				#print(" = GB Releasing Crystal = ")
-				var crystal_level
+				var crystal_level : int
 				if level < 3:
 					crystal_level = randi_range(-1, 0)
 				elif level >= 3 and level < 5:
@@ -335,7 +327,7 @@ func generate_piece(click, click_family, where="closest"):
 		empty_cell = find_closest_empty_cell(click)
 
 	if  empty_cell != Empty:
-		var family = find_family(click_family)
+		var family : String = find_family(click_family)
 		if  family != "error":
 			make_piece(family, 1)
 			place_piece(all_pieces.size()-1,empty_cell,click)
@@ -375,10 +367,10 @@ func calculate_score(texture_value):
 
 func update_score(cell_id):
 	#print (" === GB Updating Score == ")
-	var new_score
-	var bonus_score = 0
-	var texture_value = all_pieces[game_board[cell_id]].texture_index
-	var family = all_pieces[game_board[cell_id]].family
+	var new_score : int
+	var bonus_score : int = 0
+	var texture_value : int = all_pieces[game_board[cell_id]].texture_index
+	var family : String = all_pieces[game_board[cell_id]].family
 	new_score = calculate_score(texture_value)
 	print (" = GB New Score = ", new_score)
 	if texture_value == 0:
@@ -390,9 +382,9 @@ func update_score(cell_id):
 	#print(" = GB Updated Score = ", score, " & Level_score = ", level_score)
 	if score >= level_score:
 		#print(" = GB Level Up Granted!")
-		var empty_cell = find_empty_cell()
+		var empty_cell : int = find_empty_cell()
 		if empty_cell != Empty:
-			var chest_level = 3 #Chests have 4 image levels. 3 is the top.
+			var chest_level : int = 3 #Chests have 4 image levels. 3 is the top.
 			make_piece("chest", 1, chest_level) #Chests contain generator parts.
 			place_piece(all_pieces.size()-1,empty_cell)
 		else:
@@ -415,20 +407,20 @@ func display_score():
 
 func auto_generate():
 	print("== GB Auto-Generate ==")
-	for i in range(game_board.size()):
+	for i : int in range(game_board.size()):
 		if all_pieces[game_board[i]].family == "fossil":
 			#print("   GB Family is Fossil ==")
 			if all_pieces[game_board[i]].get_node("active").visible:
 				print(" =  GB Fossil is Active =")
 				$snd_NewDino.play()
-				var chance = randi_range(0,20)
+				var chance : int = randi_range(0,20)
 				if chance < 5:
 					generate_piece(all_pieces[game_board[i]].id, "bulbasaur", "random")
 				elif chance > 5 and chance < 10:
 					generate_piece(all_pieces[game_board[i]].id, "squirtle", "random")
 				else:
 					generate_piece(all_pieces[game_board[i]].id, "charmander", "random")
-				var gencount = all_pieces[game_board[i]].decrement_gen_count()
+				var gencount : int = all_pieces[game_board[i]].decrement_gen_count()
 				print("   GB GenCount is ", gencount, " ==")
 				if gencount == Empty:
 					remove_piece(i)
@@ -436,7 +428,7 @@ func auto_generate():
 		elif all_pieces[game_board[i]].family == "ruins" and all_pieces[game_board[i]].texture_index > 5:
 			if all_pieces[game_board[i]].get_node("active").visible:
 				print(" =  GB Ruins are Active ==")
-				var tex_ndx = Empty
+				var tex_ndx : int = Empty
 				match all_pieces[game_board[i]].texture_index:
 					6:
 						tex_ndx = randi_range(-1,1)
@@ -444,24 +436,24 @@ func auto_generate():
 						tex_ndx = randi_range(2,4)
 					8: 
 						tex_ndx = randi_range(5,7)
-				var chance = randi_range(1,12)
+				var chance : int = randi_range(1,12)
 				if chance < 3 and family_count("legendary") < 5:
 					$snd_NewDino.play()
 					make_piece("legendary", 1, tex_ndx)
-					var empty_cell = find_random_empty_cell()
+					var empty_cell : int = find_random_empty_cell()
 					place_piece(all_pieces.size()-1,empty_cell,i)
 
-func family_count(family):
-	var count = 0
-	for i in range(all_pieces.size()):
+func family_count(family) -> int:
+	var count : int = 0
+	for i : int in range(all_pieces.size()):
 		if all_pieces[i].family == family:
 			count +=1
 	return count
 
-func is_dino_captured(click, pclick):
-	var dino_texture = all_pieces[game_board[click]].texture_index
-	var dino_family = all_pieces[game_board[click]].family
-	var poke_texture = all_pieces[game_board[pclick]].texture_index
+func is_dino_captured(click, pclick) -> bool:
+	var dino_texture : int = all_pieces[game_board[click]].texture_index
+	var dino_family : String = all_pieces[game_board[click]].family
+	var poke_texture : int = all_pieces[game_board[pclick]].texture_index
 	
 	print("   GB dino_family = ", dino_family)
 	if dino_family == "bulbasaur":
@@ -481,7 +473,7 @@ func is_dino_captured(click, pclick):
 func capture_dino(click, pclick):
 	print(" === GB Capturing Dino ", click, " by Pokeball @ ", pclick, " ===")
 	$snd_Backpack.play()
-	var cellID = find_closest_empty_cell(click)
+	var cellID : int = find_closest_empty_cell(click)
 	if  cellID != Empty:
 		print(" = GB Releasing Rock = ")
 		$snd_Recharge.play()
@@ -531,20 +523,20 @@ func make_dino_holding_cells(count):
 		c.id = i
 
 func update_dino_holding_cells():
-	var start_position_x
-	var start_position_y = 230
-	var cell_num = 0
-	var cell_size = 0 
+	var start_position_x : int
+	var start_position_y : int = 230
+	var cell_num : int = 0
+	var cell_size : int = 0
 	cell_size = holding_cells[0].get_node("cell").get_rect().size.x
 	#Game is setup for a screen width of 1280.
 	start_position_x = 980
 	print(" GB DHC About to Loop")
-	for h in range(holding_height):
+	for h : int in range(holding_height):
 		#print(" GB DHC Inside H Loop")
-		for w in range(holding_width):
+		for w : int in range(holding_width):
 			#print(" GB DHC Inside W Loop")
-			var w_modifier = (cell_size + 20) * w
-			var h_modifier = (cell_size + 12) * h
+			var w_modifier : int = (cell_size + 20) * w
+			var h_modifier : int = (cell_size + 12) * h
 			holding_cells[cell_num].position = Vector2(start_position_x + w_modifier, start_position_y + h_modifier)
 			print(" GB DHC Position #", cell_num, " = ", holding_cells[cell_num].position)
 			holding_cells[cell_num].visible = true
@@ -572,25 +564,25 @@ func recharge_all():
 				all_pieces[game_board[i]].activate_generator()
 
 func _on_cell_clicked(click, event):
-	var is_left_click = false
-	var is_1st_click = false
-	var is_same_cell = false
-	var is_same_texture = false
-	var is_same_family = false
-	var is_generator = false
+	var is_left_click : bool = false
+	var is_1st_click : bool = false
+	var is_same_cell : bool = false
+	var is_same_texture : bool = false
+	var is_same_family : bool = false
+	var is_generator : bool = false
 	
-	var pclick_family
-	var pclick_texture
-	var pclick_empty
-	
-	var click_family
-	var click_empty
-	var click_texture
-	var click_generator
-	
-	var is_dino = false
-	var was_pokeball = false
-	var was_max = false
+	var pclick_family : String
+	var pclick_texture : int
+	var pclick_empty : bool
+
+	var click_family : String
+	var click_empty: bool
+	var click_texture : int
+	var click_generator : String
+
+	var is_dino : bool = false
+	var was_pokeball : bool = false
+	var was_max : bool = false
 	
 	#print("~~~~ GB On Cell Clicked @ ", click, "~~~~")
 	#print("Cell Position = ", cell_location[cell_id])
@@ -715,7 +707,7 @@ func _on_cell_clicked(click, event):
 		if is_dino and was_max:
 			if click_texture > 0:
 				make_piece(click_family,1,(click_texture-2))
-				var mt_cell = find_closest_empty_cell(click)
+				var mt_cell : int = find_closest_empty_cell(click)
 				place_piece((all_pieces.size()-1), mt_cell)
 				all_pieces[game_board[click]].decrement_texture()
 			else:
@@ -727,12 +719,12 @@ func _on_cell_clicked(click, event):
 		merge_pieces(click, previous_click)
 		update_game_board()
 		update_iteminfo(click)
-		var FAF = find_closest_family(click, "grass", 100)
+		var FAF : int = find_closest_family(click, "grass", 100)
 		#print("  GB Closest Grass is ", FAF)
 		if FAF != Empty:
 			remove_piece(FAF)
 			update_game_board()
-			var family = find_family(click_family)
+			var family : String = find_family(click_family)
 			if  family != "error":
 				generate_piece(FAF, family)
 

@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var id = ""
+@export var id : int = 0
 
 signal clicked(my_name)
 
@@ -9,11 +9,6 @@ func _ready():
 	#$cell.position = Vector2(100,100)
 	#$cell.texture = load("res://PokeMerge/cell_64_green.png")
 	$cell.visible = true
-	pass # Replace with function body.
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	pass
 
 func _on_area_2d_input_event(_viewport, event, _shape_idx):
 	if event is InputEventMouseMotion:

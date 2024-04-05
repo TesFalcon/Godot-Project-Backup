@@ -2,96 +2,96 @@ extends Area2D
 
 signal clicked
 
-@export var texture_index = 0
-@export var id = 0
-@export var family = ""
-@export var generator = ""
-@export var generator_count = -1
+@export var texture_index : int = 0
+@export var id : int = 0
+@export var family : String = ""
+@export var generator : String = ""
+@export var generator_count : int = -1
 
-var series = {}
-var item_info = {}
+var series : Dictionary = {}
+var item_info : Dictionary = {}
 
-var tween
+var tween : Tween
 
-const pokemart_textures = ["res://pokemerge/pokemart01_64.png", 
+const pokemart_textures := ["res://pokemerge/pokemart01_64.png",
 "res://pokemerge/pokemart02_64.png", "res://pokemerge/pokemart03_64.png",
 "res://pokemerge/pokemart04_64.png", "res://pokemerge/pokemart05_64.png",
 "res://pokemerge/pokemart06_64.png", "res://pokemerge/pokemart07_64.png",
 "res://pokemerge/pokemart08_64.png", "res://pokemerge/pokemart09_64.png",
 "res://pokemerge/pokemart10_64.png"]
 
-const pokeball_textures = ["res://pokemerge/pokeball01_64.png", 
+const pokeball_textures := ["res://pokemerge/pokeball01_64.png",
 "res://pokemerge/pokeball02_64.png","res://pokemerge/pokeball03_64.png",
 "res://pokemerge/pokeball04_64.png","res://pokemerge/pokeball05_64.png",
 "res://pokemerge/pokeball06_64.png","res://pokemerge/pokeball07_64.png",
 "res://pokemerge/pokeball08_64.png","res://pokemerge/pokeball09_64.png",
 "res://pokemerge/pokeball10_64.png"]
 
-const heal_textures = ["res://pokemerge/heal01_64.png", 
+const heal_textures := ["res://pokemerge/heal01_64.png",
 "res://pokemerge/heal02_64.png","res://pokemerge/heal03_64.png",
 "res://pokemerge/heal04_64.png","res://pokemerge/heal05_64.png"]
 
-const fossil_textures = ["res://pokemerge/fossil01_64.png", 
+const fossil_textures := ["res://pokemerge/fossil01_64.png",
 "res://pokemerge/fossil02_64.png","res://pokemerge/fossil03_64.png",
 "res://pokemerge/fossil04_64.png","res://pokemerge/fossil05_64.png",
 "res://pokemerge/fossil06_64.png","res://pokemerge/fossil12_64.png"]
 
-const stone_textures = ["res://pokemerge/stone01_64.png", 
+const stone_textures := ["res://pokemerge/stone01_64.png",
 "res://pokemerge/stone02_64.png","res://pokemerge/stone03_64.png",
 "res://pokemerge/stone04_64.png","res://pokemerge/stone05_64.png",
 "res://pokemerge/stone06_64.png"]
 
-const crystal_textures = ["res://pokemerge/crystal01_64.png", 
+const crystal_textures := ["res://pokemerge/crystal01_64.png",
 "res://pokemerge/crystal02_64.png","res://pokemerge/crystal03_64.png",
 "res://pokemerge/crystal04_64.png","res://pokemerge/crystal05_64.png"]
 
-const ruins_textures = ["res://pokemerge/ruins01_64.png", 
+const ruins_textures := ["res://pokemerge/ruins01_64.png",
 "res://pokemerge/ruins02_64.png","res://pokemerge/ruins03_64.png", #Yes, ruins04 is skipped.
 "res://pokemerge/ruins05_64.png", "res://pokemerge/ruins06_64.png",
 "res://pokemerge/ruins07_64.png", "res://pokemerge/ruins08_64.png",
 "res://pokemerge/ruins09_64.png", "res://pokemerge/ruins10_64.png"]
 
-const chest_textures = ["res://pokemerge/gift01_64.png", 
+const chest_textures := ["res://pokemerge/gift01_64.png",
 "res://pokemerge/gift02_64.png","res://pokemerge/gift03_64.png",
 "res://pokemerge/gift04_64.png", "res://pokemerge/gift05_64.png"]
 
-const grass_textures = ["res://pokemerge/grass01_64.png", 
+const grass_textures := ["res://pokemerge/grass01_64.png",
 "res://pokemerge/grass02_64.png","res://pokemerge/grass03_64.png"]
 
-const bulbasaur_textures = ["res://pokemerge/bulbasaur01_64.png", 
+const bulbasaur_textures := ["res://pokemerge/bulbasaur01_64.png",
 "res://pokemerge/bulbasaur02_64.png","res://pokemerge/bulbasaur03_64.png",
 "res://pokemerge/bulbasaur04_64.png"]
 
-const charmander_textures = ["res://pokemerge/charmander01_64.png", 
+const charmander_textures := ["res://pokemerge/charmander01_64.png",
 "res://pokemerge/charmander02_64.png","res://pokemerge/charmander03_64.png",
 "res://pokemerge/charmander04_64.png", "res://pokemerge/charmander05_64.png"]
 
-const squirtle_textures = ["res://pokemerge/squirtle1_64.png", 
+const squirtle_textures := ["res://pokemerge/squirtle1_64.png",
 "res://pokemerge/squirtle2_64.png","res://pokemerge/squirtle3_64.png",
 "res://pokemerge/squirtle4_64.png"]
 
-const game_textures = ["res://pokemerge/game01_64.png", 
+const game_textures := ["res://pokemerge/game01_64.png",
 "res://pokemerge/game02_64.png","res://pokemerge/game03_64.png",
 "res://pokemerge/game04_64.png","res://pokemerge/game05_64.png",
 "res://pokemerge/game06_64.png","res://pokemerge/game07_64.png",
 "res://pokemerge/game08_64.png","res://pokemerge/game09_64.png"]
 
-const legendary_textures = ["res://pokemerge/legendary03_64.png",
+const legendary_textures := ["res://pokemerge/legendary03_64.png",
 "res://pokemerge/legendary04_64.png","res://pokemerge/legendary05_64.png",
 "res://pokemerge/legendary06_64.png","res://pokemerge/legendary07_64.png",
 "res://pokemerge/legendary08_64.png","res://pokemerge/legendary09_64.png",
 "res://pokemerge/legendary10_64.png","res://pokemerge/legendary11_64.png"]
 
-const rock_textures = ["res://pokemerge/rock01_64.png", 
+const rock_textures := ["res://pokemerge/rock01_64.png",
 "res://pokemerge/rock02_64.png","res://pokemerge/rock03_64.png",
 "res://pokemerge/rock04_64.png"]
 
-const generators = ["pokemart", "ruins", "game"] # "industry", 
-const reverse_generators = ["chest", "fossil"] # "vending", 
-const dino = ["bulbasaur", "squirtle", "charmander", "legendary"]
+const generators := ["pokemart", "ruins", "game"] # "industry",
+const reverse_generators := ["chest", "fossil"] # "vending",
+const dino := ["bulbasaur", "squirtle", "charmander", "legendary"]
 
-var dragging = false
-var click_radius = 32 # Size of the sprite.
+var dragging : bool = false
+var click_radius : int = 32 # Size of the sprite.
 
 #var m_grid_size : Vector2
 
@@ -151,7 +151,7 @@ func _input(event):
 		#increment_texture(my_name)
 		clicked.emit(id, event)
 
-func max_texture():
+func max_texture() -> bool:
 	if family != null:
 		#print(" GP family_size = ", series[family].size())
 		if texture_index == series[family].size() - 1:
@@ -162,8 +162,7 @@ func max_texture():
 					$max.position = to_local(position) + Vector2(0,30)
 					$max.scale = Vector2(0.75, 0.75)
 			return true
-		else:
-			return false
+	return false
 
 func activate_generator():
 	print("= GP Activate_Generator = ")
@@ -200,11 +199,11 @@ func deactivate_generator():
 	$wait.visible = true
 	stop_throbbing()
 	
-func increment_texture():
+func increment_texture() -> bool:
 	print("== GP Incrementing Texture ==")
 	#print(" GP Family = ", family)
-	var is_max_texture = max_texture()
-	var is_texture_incremented = false
+	var is_max_texture : bool = max_texture()
+	var is_texture_incremented : bool = false
 	if !is_max_texture:
 		texture_index += 1
 		is_max_texture = max_texture()
@@ -220,7 +219,7 @@ func increment_texture():
 	#print(" GP Texture_size = ", series[family].size(), "===")
 	return is_texture_incremented
 
-func decrement_texture():
+func decrement_texture() -> bool :
 	print(" = GP Decrementing Texture = ")
 	texture_index -= 1
 	if texture_index > -1:
@@ -228,12 +227,12 @@ func decrement_texture():
 	#print("GP Texture_index = ", texture_index)
 	return texture_index
 
-func decrement_gen_count():
+func decrement_gen_count() -> int:
 	generator_count -= 1
 	return generator_count
 
-func get_iteminfo():
-	var item_text = item_info[family]
+func get_iteminfo() -> String:
+	var item_text : String = item_info[family]
 	if family != "grass":
 		if family == "crystal":
 			var curr_crystal_value = get_parent().calculate_score(texture_index)
@@ -248,56 +247,55 @@ func get_iteminfo():
 				item_text+= "[p][center]Click again to reset your generators.[/center][/p]"
 			if family == "stone":
 				item_text+= "[p][center]Merge w Pokemon to split into 2 lesser Pokemon.[/center][/p]"
-		return "[center]" + item_text + "[/center]"
+	return "[center]" + item_text + "[/center]"
 
 func throb():
 	tween = create_tween()	
 	tween.set_loops()
 	tween.set_trans(Tween.TRANS_SINE)
-	var duration = 1.5
+	var duration : float = 1.5
 	tween.tween_property($pokemart, "scale", Vector2(0.8,0.8), duration)
 	tween.tween_property($pokemart, "scale", Vector2(0.9,0.9), duration)
-	pass
+
 
 func stop_throbbing():
 	if tween != null:
 		tween.kill()
-	pass
 
-func family_tree(fam):
-	var tree = ""
+func family_tree(fam) -> String:
+	var tree : String = ""
 	if fam != "grass":
 		for i in range(series[fam].size()):
-			var level = i+1
-			var img = get_img(fam,i)
+			var level : int = i+1
+			var img : String = get_img(fam,i)
 			tree += "[p]Level " + str(level) + ": " + str(img) + "[/p]"
 	return tree
 
-func generator_tree():
-	var gen_tree = "Generators Produce ..."
-	var gen_img = 3
+func generator_tree() -> String:
+	var gen_tree : String = "Generators Produce ..."
+	var gen_img : int = 3
 	for i in range(generators.size()):
-		var img = get_img(generators[i],gen_img)
+		var img : String = get_img(generators[i],gen_img)
 		var next_fam = get_parent().find_family(generators[i])
-		var next_img = get_img(next_fam,0)
+		var next_img : String = get_img(next_fam,0)
 
 		gen_tree += "[p]"+ generators[i] +" => " + next_fam + "[/p]"
 		gen_tree += "[p]" + str(img) + " => " + str(next_img) + "[/p]"
 
 	for i in range(reverse_generators.size()):
 		gen_img = series[reverse_generators[i]].size()-1
-		var img = get_img(reverse_generators[i],gen_img)
+		var img : String = get_img(reverse_generators[i],gen_img)
 		var next_fam = get_parent().find_family(reverse_generators[i])
 		if next_fam == "fossil":
 			next_fam = "bulbasaur"
-		var next_img = get_img(next_fam,0)
+		var next_img : String = get_img(next_fam,0)
 
 		gen_tree += "[p]"+ reverse_generators[i] +" => " + next_fam + "[/p]"
 		gen_tree += "[p]" + str(img) + " => " + str(next_img) + "[/p]"
 	return gen_tree
 
-func capture_tree():
-	var cap_tree = "[p] pokeball => dino[/p]"
+func capture_tree() -> String:
+	var cap_tree : String = "[p] pokeball => dino[/p]"
 	for i in range(dino.size()):
 		for j in range(series[dino[i]].size()):
 			if dino[i] == "bulbasaur":
@@ -310,14 +308,14 @@ func capture_tree():
 				cap_tree += "[p]" + get_img("pokeball",j) + " => " + get_img(dino[i],j) + "[/p]"
 	return "[center]" + cap_tree + "[/center]"
 
-func init_stats(fam):
-	var stats = {}
+func init_stats(fam) -> Dictionary:
+	var stats : Dictionary = {}
 	for i in range(series[fam].size()):
 		stats[i] = 0
 	return stats
 
-func get_img(fam, index):
+func get_img(fam, index) -> String:
 	return "[img]" + series[fam][index] + "[/img]"
 
-func wait_visible():
+func wait_visible() -> bool:
 	return $wait.visible

@@ -1,31 +1,28 @@
 extends Sprite2D
 
-var pokemerge_page = "[p][center][b]Welcome to PokeMerge![/b][/center][/p]
-			[p]In the world of Pokemon, it's easy to think of it as just a game, but it's so much more. Here we will explore the fossil evidence of ancient dinosaurs, the commercialization of pokemon capture, and ask the all-important question ...[/p] [p][center][b][i]CAN YOU CATCH 'EM ALL?[/i][/b][/center][/p]
-			[p]To learn more, click the Arrows below.[/p]
-			[p]To mirror a page to the right side of the screen, click the Notebook.[/p]"
-var game_page = "[p][center]It's Just a Game[/center][/p]"
-var ruins_page = "[center][p]What's In These Ruins[/p][/center]"
-var fossil_page = "[center][p]I Found a Fossil![/p][/center]"
-var pokemart_page = "[center][p]The World of Pokemart[/p][/center]"
-var pokeball_page = "[center][p]Pokeballs in All Their Variety[/p][/center]"
-var heal_page = "[center][p]Healing Salves and Lotions[/p][/center]"
-var stone_page = "[center][p]Precious Stones[/p][/center]"
-var crystal_page = "[center][p]Experience Point Crystals[/p][/center]"
-var rock_page = "[center][p]Super XP with Special Rocks[/p][/center]"
-var bulbasaur_page = "[center][p]Bulbasaur[/p][/center]"
-var squirtle_page = "[center][p]Squirtle[/p][/center]"
-var charmander_page = "[center][p]Charmander[/p][/center]"
-var legendary_page = "[center][p]Legendary Pokemon[/p][/center]"
+var pokemerge_page : String = "[p][center][b]Welcome to PokeMerge![/b][/center][/p]			[p]In the world of Pokemon, it's easy to think of it as just a game, but it's so much more. Here we will explore the fossil evidence of ancient dinosaurs, the commercialization of pokemon capture, and ask the all-important question ...[/p] [p][center][b][i]CAN YOU CATCH 'EM ALL?[/i][/b][/center][/p]			[p]To learn more, click the Arrows below.[/p]			[p]To mirror a page to the right side of the screen, click the Notebook.[/p]"
+var game_page : String = "[p][center]It's Just a Game[/center][/p]"
+var ruins_page : String = "[center][p]What's In These Ruins[/p][/center]"
+var fossil_page : String = "[center][p]I Found a Fossil![/p][/center]"
+var pokemart_page : String = "[center][p]The World of Pokemart[/p][/center]"
+var pokeball_page : String = "[center][p]Pokeballs in All Their Variety[/p][/center]"
+var heal_page : String = "[center][p]Healing Salves and Lotions[/p][/center]"
+var stone_page : String = "[center][p]Precious Stones[/p][/center]"
+var crystal_page : String = "[center][p]Experience Point Crystals[/p][/center]"
+var rock_page : String = "[center][p]Super XP with Special Rocks[/p][/center]"
+var bulbasaur_page : String = "[center][p]Bulbasaur[/p][/center]"
+var squirtle_page : String = "[center][p]Squirtle[/p][/center]"
+var charmander_page : String = "[center][p]Charmander[/p][/center]"
+var legendary_page : String = "[center][p]Legendary Pokemon[/p][/center]"
 
-var Notebook = {}
-var bulb_stats = {}
-var squirtle_stats = {}
-var char_stats = {}
-var legend_stats = {}
+var Notebook : Dictionary = {}
+var bulb_stats : Dictionary = {}
+var squirtle_stats : Dictionary = {}
+var char_stats : Dictionary = {}
+var legend_stats : Dictionary = {}
 
-var page = []
-var current_page = -1
+var page := []
+var current_page : int = -1
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -91,26 +88,26 @@ func previous_page():
 		current_page = Notebook.size()-1 
 	get_parent().get_node("Control/lblInstructions").text = Notebook[page[current_page]]
 
-func get_family_tree(family):
+func get_family_tree(family) -> String:
 	return get_parent().get_node("GamePiece").family_tree(family)
 
-func get_generator_tree():	
+func get_generator_tree() -> String:
 	return get_parent().get_node("GamePiece").generator_tree()
 
-func get_capture_tree():
-	var cap_tree = "[p][b] Catch Pokemon Like This [/b][/p]"
+func get_capture_tree() -> String:
+	var cap_tree : String = "[p][b] Catch Pokemon Like This [/b][/p]"
 	cap_tree += get_parent().get_node("GamePiece").capture_tree()
 	return cap_tree
 
-func get_stats():
-	var stats = "[p]Pokemon Captured![/p]"
-	for i in bulb_stats.size():
+func get_stats() -> String:
+	var stats : String = "[p]Pokemon Captured![/p]"
+	for i : int in bulb_stats.size():
 		stats += "[p] " + get_parent().get_node("GamePiece").get_img("bulbasaur",i) +  " = " + str(bulb_stats[i]) + "[/p]"
-	for i in squirtle_stats.size():
+	for i : int in squirtle_stats.size():
 		stats += "[p] " + get_parent().get_node("GamePiece").get_img("squirtle",i) +  " = " + str(squirtle_stats[i]) + "[/p]"
-	for i in char_stats.size():
+	for i : int in char_stats.size():
 		stats += "[p] " + get_parent().get_node("GamePiece").get_img("charmander",i) +  " = " + str(char_stats[i]) + "[/p]"
-	for i in legend_stats.size():
+	for i : int in legend_stats.size():
 		stats += "[p] " + get_parent().get_node("GamePiece").get_img("legendary",i) +  " = " + str(legend_stats[i]) + "[/p]"
 	return "[center]" + stats + "[/center]"
 
@@ -132,7 +129,7 @@ func mirror_to_lblStatic():
 func refresh():
 	get_parent().get_node("Control/lblInstructions").text = Notebook[page[current_page]]
 
-func is_max_texture(fam, tex_index):
+func is_max_texture(fam, tex_index) -> bool:
 	match fam:
 		"bulbasaur":
 			if tex_index == bulb_stats.size():
@@ -146,3 +143,4 @@ func is_max_texture(fam, tex_index):
 		"legendary":
 			if tex_index == legend_stats.size():
 				return true
+	return false
